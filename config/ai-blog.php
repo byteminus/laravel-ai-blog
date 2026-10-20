@@ -106,4 +106,27 @@ return [
         'middleware' => ['auth:sanctum'],
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Media (upload-media and attach-media)
+    |--------------------------------------------------------------------------
+    | Images an agent stores for the blog. Each is checked to be a real PNG,
+    | JPEG or WebP, re-encoded as WebP with GD (which drops EXIF and other
+    | metadata), scaled down to `max_width`, stored once per content hash on
+    | `disk` under `directory`, and served from the disk's public URL. The
+    | "public" disk needs `php artisan storage:link`. Requires ext-gd with WebP.
+    */
+    'media' => [
+        'disk' => env('AI_BLOG_MEDIA_DISK', 'public'),
+        'directory' => 'blog',
+        'max_bytes' => 15 * 1024 * 1024,   // what may be uploaded or downloaded
+        'max_pixels' => 8000,              // per side
+        'max_megapixels' => 40,
+        'max_width' => 2400,               // wider images are scaled down
+        'webp_quality' => 82,
+        'uploads_per_hour' => 60,          // per user
+        'fetch_timeout' => 20,             // seconds, for source_url and ChatGPT files
+        'fetch_max_redirects' => 3,
+    ],
+
 ];

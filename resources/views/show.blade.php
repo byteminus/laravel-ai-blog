@@ -12,6 +12,9 @@
     <header>
         <h1>{{ $post->title }}</h1>
         <time datetime="{{ $post->published_at?->toIso8601String() }}">{{ $post->published_at?->toFormattedDateString() }}</time>
+        @if ($image = \ByteMinus\AiBlog\Seo\StructuredData::imageUrl($post))
+            <img class="ai-blog-featured" src="{{ $image }}" alt="{{ $post->featured_image_alt }}" decoding="async" fetchpriority="high">
+        @endif
     </header>
 
     <x-ai-blog::post-body :post="$post" />

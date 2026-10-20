@@ -114,8 +114,40 @@ claude mcp add --transport http my-blog https://example.com/mcp/ai-blog --header
 ```
 
 Tools: `list-posts`, `get-post`, `create-draft`, `update-post`, `draft-from-keyword`, `score-post`,
-`suggest-links`, `schedule-post`. There is deliberately **no `publish-post` tool** — agents draft,
+`suggest-links`, `schedule-post`, `upload-media`, `attach-media`. There is deliberately **no `publish-post` tool** — agents draft,
 score, link and schedule; a human (or the scheduler, after a human scheduled it) publishes.
+
+The MCP tools need laravel/mcp ^1.0 (Laravel 12.41 or later).
+
+### Images (`upload-media`, `attach-media`)
+
+`upload-media` stores an image and answers with `media_id`, `url`, `markdown`, `width`, `height`, `mime_type`,
+`size_bytes` and `alt_text`. Give it exactly one source:
+
+- `file`: a file from the conversation. The tool declares `_meta["openai/fileParams"] = ["file"]`, so ChatGPT
+  replaces the argument with `{download_url, file_id, mime_type, file_name}` for a file it generated or was given.
+  The temporary `download_url` is downloaded and never repeated in the answer.
+- `source_url`: a public `https://` address.
+- `image_base64` (with `mime_type`).
+
+Downloads go through the same URL, DNS and IP checks as `SafeFetcher` (no private, loopback, link-local or cloud
+metadata addresses, the connection pinned to the checked address, every redirect checked again), https on port 443
+only. The image must really be a PNG, JPEG or WebP within `ai-blog.media` limits; it is re-encoded as WebP with GD
+(metadata such as EXIF and GPS is dropped), scaled down to `max_width`, stored once per content hash on the
+`ai-blog.media.disk` (default `public`, so run `php artisan storage:link`), and served from that disk's public URL.
+
+`attach-media` puts an image on a post: `placement: featured` sets `featured_image` and its alt text (article header,
+`og:image`, `twitter:image`, JSON-LD), and `placement: inline` adds the Markdown image under `after_heading`, or at
+the end, leaving the rest of the body as it was and never adding the same image twice. `upload-media` takes `post_id`
+and `role` to do both in one call. Images in a post's body render with `loading="lazy"` and `decoding="async"`.
+A user may attach an image they uploaded, or any image when the `manageAiBlog` gate allows them.
+
+Needs `ext-gd` with WebP support, and the media migration:
+
+```bash
+php artisan vendor:publish --tag=ai-blog-migrations
+php artisan migrate
+```
 
 For Claude.ai and ChatGPT custom connectors, use laravel/mcp's OAuth support (`Mcp::oauthRoutes()` with Passport).
 

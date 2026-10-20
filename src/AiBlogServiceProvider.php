@@ -26,7 +26,7 @@ class AiBlogServiceProvider extends PackageServiceProvider
             ->name('laravel-ai-blog')
             ->hasConfigFile('ai-blog')
             ->hasViews('ai-blog')
-            ->hasMigrations(['create_ai_blog_tables', 'create_ai_blog_command_tables'])
+            ->hasMigrations(['create_ai_blog_tables', 'create_ai_blog_command_tables', 'create_ai_blog_media_table'])
             ->hasCommands([
                 PublishScheduledCommand::class,
                 AuditCommand::class,

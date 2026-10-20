@@ -36,6 +36,7 @@
     },
     "require-dev": {
         "larastan/larastan": "^2.9||^3.0",
+        "laravel/mcp": "^1.0",
         "laravel/pint": "^1.14",
         "orchestra/testbench": "^8.0||^9.0||^10.0||^11.0",
         "pestphp/pest": "^2.0||^3.0||^4.0",
@@ -43,7 +44,8 @@
     },
     "suggest": {
         "laravel/ai": "Enables the AI editor, brief-to-draft, semantic linking and refresh features (^1.0).",
-        "laravel/mcp": "Exposes the blog to Claude, ChatGPT, Claude Code and other agents over MCP (^1.0).",
+        "ext-gd": "Converts images stored with the upload-media MCP tool to WebP (needs WebP support).",
+        "laravel/mcp": "Exposes the blog to Claude, ChatGPT, Claude Code and other agents over MCP (^1.0, Laravel 12.41+).",
         "spatie/laravel-sitemap": "Adds posts to your XML sitemap automatically."
     },
     "autoload": {

@@ -29,6 +29,16 @@ final class Markdown
                 ->withMaxInputLength(2_000_000)
         );
 
-        return $sanitizer->sanitize(self::toHtml($markdown));
+        return self::lazyImages($sanitizer->sanitize(self::toHtml($markdown)));
+    }
+
+    /**
+     * Images in a post's body load lazily and decode off the main thread; none of them is the page's
+     * largest element (the featured image is, and it is not in the body). Runs on sanitized output, where
+     * every tag is well formed.
+     */
+    private static function lazyImages(string $html): string
+    {
+        return preg_replace_callback('/<img\b(?![^>]*\bloading=)([^>]*)>/i', fn ($m) => '<img loading="lazy" decoding="async"'.$m[1].'>', $html) ?? $html;
     }
 }

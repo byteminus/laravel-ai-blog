@@ -4,7 +4,7 @@ namespace ByteMinus\AiBlog\Mcp\Tools;
 
 use ByteMinus\AiBlog\AiBlog;
 use ByteMinus\AiBlog\Mcp\Tools\Concerns\SerializesPosts;
-use Illuminate\JsonSchema\JsonSchema;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
@@ -13,7 +13,7 @@ class ScorePost extends Tool
 {
     use SerializesPosts;
 
-    protected string $description = 'Score a post\'s on-page SEO (0–100) and list the specific fixes, so you can apply them with update_post.';
+    protected string $description = 'Score a post\'s on-page SEO (0–100) and list the specific fixes, so you can apply them with update-post.';
 
     public function handle(Request $request): Response
     {

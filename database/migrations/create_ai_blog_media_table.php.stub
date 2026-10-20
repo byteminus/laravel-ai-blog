@@ -1,0 +1,35 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        $prefix = config('ai-blog.table_prefix', 'ai_blog_');
+
+        Schema::create($prefix.'media', function (Blueprint $table) {
+            $table->id();
+            $table->string('disk', 64);
+            $table->string('path');
+            $table->char('hash', 64)->unique();
+            $table->string('mime_type', 64);
+            $table->unsignedInteger('width');
+            $table->unsignedInteger('height');
+            $table->unsignedBigInteger('size_bytes');
+            $table->string('alt_text', 255)->nullable();
+            $table->string('title', 255)->nullable();
+            $table->text('caption')->nullable();
+            $table->string('source', 20);
+            $table->nullableMorphs('uploader');
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists(config('ai-blog.table_prefix', 'ai_blog_').'media');
+    }
+};

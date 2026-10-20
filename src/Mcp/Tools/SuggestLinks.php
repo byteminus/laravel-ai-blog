@@ -4,7 +4,7 @@ namespace ByteMinus\AiBlog\Mcp\Tools;
 
 use ByteMinus\AiBlog\AiBlog;
 use ByteMinus\AiBlog\Mcp\Tools\Concerns\SerializesPosts;
-use Illuminate\JsonSchema\JsonSchema;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
@@ -13,7 +13,7 @@ class SuggestLinks extends Tool
 {
     use SerializesPosts;
 
-    protected string $description = 'Suggest internal links from this post to related posts, with anchor text. Insert them with update_post.';
+    protected string $description = 'Suggest internal links from this post to related posts, with anchor text. Insert them with update-post.';
 
     public function handle(Request $request): Response
     {

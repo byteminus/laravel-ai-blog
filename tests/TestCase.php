@@ -4,15 +4,17 @@ namespace ByteMinus\AiBlog\Tests;
 
 use ByteMinus\AiBlog\AiBlogServiceProvider;
 use Laravel\Ai\AiServiceProvider;
+use Laravel\Mcp\Server\McpServiceProvider;
 use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {
     protected function getPackageProviders($app): array
     {
-        // laravel/ai is optional; when it is installed, boot it so the integration test can use its fakes.
+        // laravel/ai and laravel/mcp are optional; when installed, boot them so their tests can run.
         return array_merge(
             class_exists(AiServiceProvider::class) ? [AiServiceProvider::class] : [],
+            class_exists(McpServiceProvider::class) ? [McpServiceProvider::class] : [],
             [AiBlogServiceProvider::class],
         );
     }
@@ -30,7 +32,7 @@ class TestCase extends Orchestra
 
     protected function defineDatabaseMigrations(): void
     {
-        foreach (['create_ai_blog_tables', 'create_ai_blog_command_tables'] as $stub) {
+        foreach (['create_ai_blog_tables', 'create_ai_blog_command_tables', 'create_ai_blog_media_table'] as $stub) {
             $migration = include __DIR__."/../database/migrations/{$stub}.php.stub";
             $migration->up();
         }

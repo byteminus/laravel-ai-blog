@@ -1,6 +1,13 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 - 2026-10-20
+
+- MCP: new `upload-media` tool. Stores a PNG, JPEG or WebP image from a ChatGPT file (`_meta["openai/fileParams"]`), a public https URL or base64, re-encodes it as WebP without metadata, stores it once per content hash and answers with its public URL and Markdown. Optional `post_id` and `role` attach it at once.
+- MCP: new `attach-media` tool. Sets a post's featured image, or adds an image inline under a heading or at the end of the body, without duplicates.
+- New `media` table (`create_ai_blog_media_table` migration, publish it with `ai-blog-migrations`), `ByteMinus\AiBlog\Models\Media`, `ByteMinus\AiBlog\Media\MediaLibrary` and `ai-blog.media` config. Needs `ext-gd` with WebP.
+- Pages: the default post view shows the featured image in the header; images in a post's body load lazily.
+- Fix: every MCP tool now types `schema()` with `Illuminate\Contracts\JsonSchema\JsonSchema`, as laravel/mcp 1.x declares it. Before, loading any tool on laravel/mcp 1.x was a fatal error. The MCP server now needs laravel/mcp ^1.0 (Laravel 12.41+).
+- Fix: tool descriptions name other tools the way clients see them (`update-post`, `schedule-post`).
 
 - Breaking: the package moved to the byteminus organisation. Install `byteminus/laravel-ai-blog` instead of `hawkforge/laravel-ai-blog`, and change `use AiBlog\...` to `use ByteMinus\AiBlog\...` in your code. Published config files need the same change.
 - Fix: the AI features now work with laravel/ai 1.x. The assistant looked for a `Laravel\Ai\Facades\Ai` class that laravel/ai does not have, so every AI call failed with "need the laravel/ai SDK" even when it was installed. It now sends each request through `Laravel\Ai\AnonymousAgent`.

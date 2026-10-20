@@ -37,7 +37,7 @@ jobs:
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
-          extensions: curl, dom, libxml, mbstring, sqlite3, pdo_sqlite
+          extensions: curl, dom, libxml, mbstring, sqlite3, pdo_sqlite, gd
           coverage: none
 
       - name: Install dependencies
@@ -46,6 +46,8 @@ jobs:
           composer config audit.block-insecure false
           # Static analysis runs in the lint job; it does not support every Laravel version tested here.
           composer remove larastan/larastan --dev --no-update
+          # laravel/mcp 1.x needs Laravel 12.41+; on older Laravel its tests skip.
+          if [[ "${{ matrix.laravel }}" == 10.* || "${{ matrix.laravel }}" == 11.* ]]; then composer remove laravel/mcp --dev --no-update; fi
           composer require "illuminate/contracts:${{ matrix.laravel }}" "illuminate/http:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
           composer update --prefer-dist --prefer-stable --no-interaction ${{ matrix.stability == 'lowest' && '--prefer-lowest' || '' }}
 

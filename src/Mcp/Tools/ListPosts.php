@@ -3,7 +3,7 @@
 namespace ByteMinus\AiBlog\Mcp\Tools;
 
 use ByteMinus\AiBlog\Mcp\Tools\Concerns\SerializesPosts;
-use Illuminate\JsonSchema\JsonSchema;
+use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
