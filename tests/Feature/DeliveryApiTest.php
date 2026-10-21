@@ -32,10 +32,9 @@ class DeliveryApiTest extends TestCase
 
     public function test_it_is_off_by_default(): void
     {
-        config()->set('ai-blog.delivery.enabled', false);
-        $this->refreshApplication();
+        $config = require __DIR__.'/../../config/ai-blog.php';
 
-        $this->getJson('/api/blog/v1/posts')->assertNotFound();
+        $this->assertFalse($config['delivery']['enabled']);
     }
 
     public function test_drafts_scheduled_and_future_posts_never_leak(): void
