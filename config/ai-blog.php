@@ -44,6 +44,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Delivery API (opt-in)
+    |--------------------------------------------------------------------------
+    | Read-only, versioned JSON for headless front ends: published posts
+    | (list, by id, by slug), categories and SEO metadata, with pagination and
+    | ETag / Cache-Control headers. Only published posts are ever returned.
+    | `cache_ttl` is the public max-age in seconds (0 sends no-store).
+    */
+    'delivery' => [
+        'enabled' => env('AI_BLOG_DELIVERY_ENABLED', false),
+        'prefix' => 'api/blog/v1',
+        'middleware' => ['api', 'throttle:60,1'],
+        'cache_ttl' => 300,
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | SEO
     |--------------------------------------------------------------------------
     */
