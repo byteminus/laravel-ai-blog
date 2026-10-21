@@ -18,7 +18,7 @@ class DeliveryApiTest extends TestCase
         $app['config']->set('ai-blog.seo.site_name', 'Acme Blog');
     }
 
-    private function post(array $attributes = []): Post
+    private function makePost(array $attributes = []): Post
     {
         return Post::create($attributes + [
             'title' => 'Queues explained',
@@ -39,10 +39,10 @@ class DeliveryApiTest extends TestCase
 
     public function test_drafts_scheduled_and_future_posts_never_leak(): void
     {
-        $live = $this->post();
-        $draft = $this->post(['title' => 'Draft', 'slug' => 'draft', 'status' => 'draft', 'published_at' => null]);
-        $scheduled = $this->post(['title' => 'Soon', 'slug' => 'soon', 'status' => 'scheduled', 'published_at' => null, 'scheduled_for' => now()->addDay()]);
-        $future = $this->post(['title' => 'Future', 'slug' => 'future', 'published_at' => now()->addDay()]);
+        $live = $this->makePost();
+        $draft = $this->makePost(['title' => 'Draft', 'slug' => 'draft', 'status' => 'draft', 'published_at' => null]);
+        $scheduled = $this->makePost(['title' => 'Soon', 'slug' => 'soon', 'status' => 'scheduled', 'published_at' => null, 'scheduled_for' => now()->addDay()]);
+        $future = $this->makePost(['title' => 'Future', 'slug' => 'future', 'published_at' => now()->addDay()]);
 
         $this->getJson('/api/blog/v1/posts')
             ->assertOk()
@@ -61,7 +61,7 @@ class DeliveryApiTest extends TestCase
 
     public function test_a_post_is_available_by_slug_with_seo_metadata_and_no_internal_fields(): void
     {
-        $this->post([
+        $this->makePost([
             'featured_image' => '/storage/queues.png',
             'featured_image_alt' => 'A queue',
             'seo_score' => 91,
@@ -88,7 +88,7 @@ class DeliveryApiTest extends TestCase
     public function test_the_list_is_paginated_and_omits_bodies(): void
     {
         foreach (range(1, 5) as $n) {
-            $this->post(['title' => "Post {$n}", 'slug' => "post-{$n}", 'published_at' => now()->subMinutes($n)]);
+            $this->makePost(['title' => "Post {$n}", 'slug' => "post-{$n}", 'published_at' => now()->subMinutes($n)]);
         }
 
         $this->getJson('/api/blog/v1/posts?per_page=2&page=2')
@@ -105,7 +105,7 @@ class DeliveryApiTest extends TestCase
 
     public function test_responses_carry_cache_headers_and_honour_if_none_match(): void
     {
-        $this->post();
+        $this->makePost();
 
         $first = $this->getJson('/api/blog/v1/posts/by-slug/queues-explained')->assertOk();
         $etag = $first->headers->get('ETag');
@@ -127,9 +127,9 @@ class DeliveryApiTest extends TestCase
         $news = Category::create(['name' => 'News']);
         Category::create(['name' => 'Empty']);
 
-        $this->post(['category_id' => $news->id]);
-        $this->post(['title' => 'Hidden', 'slug' => 'hidden', 'status' => 'draft', 'published_at' => null, 'category_id' => $news->id]);
-        $this->post(['title' => 'Other', 'slug' => 'other']);
+        $this->makePost(['category_id' => $news->id]);
+        $this->makePost(['title' => 'Hidden', 'slug' => 'hidden', 'status' => 'draft', 'published_at' => null, 'category_id' => $news->id]);
+        $this->makePost(['title' => 'Other', 'slug' => 'other']);
 
         $this->getJson('/api/blog/v1/posts?category=news')
             ->assertOk()
