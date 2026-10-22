@@ -245,6 +245,23 @@ Your layout needs `@yield('title')`, `@yield('content')` and `@stack('head')`; t
 - Tags with nothing to say are left out rather than sent empty: a post with no description gets no
   `description` tag. Set `ai-blog.seo.description` (or `AI_BLOG_SEO_DESCRIPTION`) for the blog's own description.
 
+## Delivery API (opt-in, read-only)
+
+For a separate front end (Next.js, Nuxt, a mobile app), serve published content as versioned JSON. It is **off by
+default**; set `AI_BLOG_DELIVERY_ENABLED=true` or `'delivery' => ['enabled' => true]` in `config/ai-blog.php`.
+
+| Route (default prefix `api/blog/v1`) | Returns |
+| --- | --- |
+| `GET /posts?page=&per_page=&category=&tag=` | Paginated list (`per_page` max 50), without bodies |
+| `GET /posts/{id}` and `GET /posts/by-slug/{slug}` | One post with Markdown `body` and `seo` incl. JSON-LD |
+| `GET /categories` | Categories with their published post counts |
+
+Every query goes through the model's `published()` scope and nothing in the request can widen it, so drafts,
+scheduled and future-dated posts return 404 or are left out. Only an allow-list of fields is sent (no `meta`,
+`seo_score` or `ai_assistance`). Responses carry `ETag`, `Last-Modified` and `Cache-Control: public, max-age=300`
+and answer `If-None-Match` with `304`. Change the prefix, middleware (default `api`, `throttle:60,1`) and
+`cache_ttl` under `ai-blog.delivery`.
+
 ## Scheduler
 
 ```php

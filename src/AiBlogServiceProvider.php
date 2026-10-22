@@ -66,6 +66,10 @@ class AiBlogServiceProvider extends PackageServiceProvider
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         }
 
+        if (config('ai-blog.delivery.enabled')) {
+            $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
+        }
+
         if (config('ai-blog.mcp.enabled') && class_exists(Mcp::class)) {
             Mcp::web(
                 config('ai-blog.mcp.path', '/mcp/ai-blog'),
